@@ -1,6 +1,6 @@
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useEffect, useState } from 'react'
+import { Disclosure } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -18,6 +18,29 @@ function classNames(...classes: string[]) {
 export default function Example() {
   const router = useRouter();
   const currentPath = router.asPath;
+
+  const [mode, setMode] = useState('');
+ 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const active = window.localStorage.getItem('theme')
+      setMode(active && active == 'dark'?'light':'dark');
+    }
+  },[]);
+
+  const toggleDarkMode = ()=> {
+    let htmlClass = document.querySelector("html")?.classList;
+    if(localStorage.getItem('theme') === 'dark'){
+      setMode('dark');
+      htmlClass?.remove('dark');
+      window.localStorage.removeItem('theme');
+    }else{
+      setMode('light');
+      htmlClass?.add('dark');
+      window.localStorage.setItem('theme', 'dark');
+    }
+
+  }
 
   return (
     <div className="flex justify-center m-auto">
@@ -66,9 +89,10 @@ export default function Example() {
                               {item.name}
                             </Link>
                             ))}
-                            <button className="bg-primary text-white border text-sm font-medium border-primary px-6 py-2 rounded transition-colors hover:bg-white hover:text-primary hover:border-primary">Login</button>
                           </div>
                         </div>
+                            <button className="bg-primary text-white border text-sm font-medium border-primary px-6 py-2 rounded transition-colors hover:bg-white hover:text-primary hover:border-primary me-3">Login</button>
+                            <img onClick={toggleDarkMode} src={`/images/common/${mode && mode!== ''?mode:'dark'}-loop.svg`} alt='theme-icon' className='dark:invert-white cursor-pointer z-10 rounded-full w-6' />
                     {/* <button
                       type="button"
                       className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
